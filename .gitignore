@@ -1,0 +1,4 @@
+.ide/
+release/
+.cmake/
+.idea/
