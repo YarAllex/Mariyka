@@ -7,11 +7,5 @@
 
 #include "gtkmm.h"
 
-class MainWindow : public Gtk::Window {
-
-public:
-    MainWindow();
-};
-
 
 #endif //MARIYKA_MAINWINDOW_H
