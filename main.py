@@ -21,69 +21,65 @@ ERROR_TIME_IS_OVER = 'Error: Time is over'
 
 global stream
 
+class Controller:
+    def create_cam(self):
+        pipe = subprocess.Popen(CMD_CREATE_CAM, stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
+        pipe.communicate(input=getpass.getpass(ENTER_THE_SUDO_PASSWORD))
+        pipe.wait()
+        del pipe
+        print(CREATE_CAMERA)
 
-def create_cam():
-    pipe = subprocess.Popen(CMD_CREATE_CAM, stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
-    pipe.communicate(input=getpass.getpass(ENTER_THE_SUDO_PASSWORD))
-    pipe.wait()
-    del pipe
-    print(CREATE_CAMERA)
+    def release_cam(self):
+        error = self.run_cmd(CMD_RELEASE_CAM)
 
+        if error.__contains__(LOOPBACK_IS_IN_USE):
+            success = self.waiting_camera(CMD_RELEASE_CAM, error)
+        else:
+            success = True
 
-def release_cam():
-    error = run_cmd(CMD_RELEASE_CAM)
+        if success:
+            print(RELEASE_CAMERA)
+        else:
+            print(ERROR_TIME_IS_OVER)
 
-    if error.__contains__(LOOPBACK_IS_IN_USE):
-        success = waiting_camera(CMD_RELEASE_CAM, error)
-    else:
-        success = True
+    def waiting_camera(self, cmd, error):
+        print(LOOPBACK_IS_IN_USE, PLEASE_WAIT)
 
-    if success:
-        print(RELEASE_CAMERA)
-    else:
-        print(ERROR_TIME_IS_OVER)
+        i = WAITING_PERIOD
+        while error.__contains__(LOOPBACK_IS_IN_USE) and i > 0:
+            print('...')
+            time.sleep(WAITING_TIMEOUT / i)
+            error = self.run_cmd(cmd)
+            i -= 1
+        print('')
 
+        return i > 0
 
-def waiting_camera(cmd, error):
-    print(LOOPBACK_IS_IN_USE, PLEASE_WAIT)
+    def run_cmd(self, cmd):
+        pipe = subprocess.Popen(cmd, stderr=PIPE, text=True)
+        pipe.wait()
+        error = pipe.stderr.readline()
+        pipe.kill()
+        del pipe
+        return error
 
-    i = WAITING_PERIOD
-    while error.__contains__(LOOPBACK_IS_IN_USE) and i > 0:
-        print('...')
-        time.sleep(WAITING_TIMEOUT / i)
-        error = run_cmd(cmd)
-        i -= 1
-    print('')
+    def run_stream(self):
+        global stream
+        stream = Popen(CMD_START_FFMPEG_STREAM, stderr=PIPE, stdout=PIPE, stdin=PIPE, universal_newlines=True)
+        print(RUN_STREAM)
 
-    return i > 0
-
-
-def run_cmd(cmd):
-    pipe = subprocess.Popen(cmd, stderr=PIPE, text=True)
-    pipe.wait()
-    error = pipe.stderr.readline()
-    pipe.kill()
-    del pipe
-    return error
-
-
-def run_stream():
-    global stream
-    stream = Popen(CMD_START_FFMPEG_STREAM, stderr=PIPE, stdout=PIPE, stdin=PIPE, universal_newlines=True)
-    print(RUN_STREAM)
-
-
-def stop_stream():
-    print(input(PRESS_ENTER_TO_STOP), end='')
-    if stream is not None:
-        stream.kill()
+    def stop_stream(self):
+        if stream is not None:
+            stream.kill()
 
 
 def main():
-    create_cam()
-    run_stream()
-    stop_stream()
-    release_cam()
+    controller = Controller()
+    controller.create_cam()
+    controller.run_stream()
+    print(input(PRESS_ENTER_TO_STOP), end='')
+    controller.stop_stream()
+    controller.release_cam()
 
 
 # Press the green button in the gutter to run the script.
