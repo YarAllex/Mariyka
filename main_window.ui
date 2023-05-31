@@ -3,102 +3,88 @@
 <interface>
   <requires lib="gtk" version="4.6"/>
   <object class="GtkWindow" id="main_window">
-    <property name="default-height">320</property>
+    <property name="default-height">130</property>
     <property name="default-width">480</property>
     <child>
-      <object class="GtkGrid">
+      <object class="GtkBox">
         <property name="margin-bottom">5</property>
         <property name="margin-end">5</property>
         <property name="margin-start">5</property>
         <property name="margin-top">5</property>
+        <property name="orientation">vertical</property>
         <child>
-          <object class="GtkButton" id="bStart">
-            <property name="hexpand">True</property>
-            <property name="label">Start</property>
-            <property name="margin-bottom">5</property>
-            <property name="margin-end">5</property>
-            <property name="margin-start">5</property>
-            <property name="margin-top">5</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="column-span">1</property>
-              <property name="row">1</property>
-              <property name="row-span">1</property>
-            </layout>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkButton" id="bChoose">
+                <property name="label">Open...</property>
+                <property name="margin-bottom">5</property>
+                <property name="margin-end">5</property>
+                <property name="margin-start">5</property>
+                <property name="margin-top">5</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkTextView" id="tPath">
+                <property name="cursor-visible">False</property>
+                <property name="margin-bottom">5</property>
+                <property name="margin-end">5</property>
+                <property name="margin-start">5</property>
+                <property name="margin-top">5</property>
+                <property name="overwrite">True</property>
+                <property name="pixels-inside-wrap">4</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkEntry" id="ePath">
+                <property name="hexpand">True</property>
+                <property name="margin-bottom">5</property>
+                <property name="margin-end">5</property>
+                <property name="margin-start">5</property>
+                <property name="margin-top">5</property>
+                <property name="placeholder-text">path to video...</property>
+                <property name="sensitive">False</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="cLoop">
+                <property name="active">True</property>
+                <property name="label">loop</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="lFilePath">
-            <property name="halign">start</property>
-            <property name="label">Video: </property>
-            <property name="margin-bottom">5</property>
-            <property name="margin-end">5</property>
-            <property name="margin-start">5</property>
-            <property name="margin-top">5</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="column-span">1</property>
-              <property name="row">0</property>
-              <property name="row-span">1</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkTextView" id="tPath">
-            <property name="margin-bottom">5</property>
-            <property name="margin-end">5</property>
-            <property name="margin-start">5</property>
-            <property name="margin-top">5</property>
-            <property name="pixels-inside-wrap">4</property>
-            <property name="sensitive">False</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="column-span">1</property>
-              <property name="row">0</property>
-              <property name="row-span">1</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="bStop">
-            <property name="hexpand">True</property>
-            <property name="label">Stop</property>
-            <property name="margin-bottom">5</property>
-            <property name="margin-end">5</property>
-            <property name="margin-start">5</property>
-            <property name="margin-top">5</property>
-            <layout>
-              <property name="column">1</property>
-              <property name="row">1</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton">
-            <property name="hexpand">True</property>
-            <property name="margin-bottom">5</property>
-            <property name="margin-end">5</property>
-            <property name="margin-start">5</property>
-            <property name="margin-top">5</property>
-            <layout>
-              <property name="column">2</property>
-              <property name="row">1</property>
-            </layout>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="bChoose">
-            <property name="halign">end</property>
-            <property name="hexpand">True</property>
-            <property name="label">chose...</property>
-            <property name="margin-bottom">5</property>
-            <property name="margin-end">5</property>
-            <property name="margin-start">5</property>
-            <property name="margin-top">5</property>
-            <layout>
-              <property name="column">2</property>
-              <property name="row">0</property>
-            </layout>
+          <object class="GtkBox">
+            <property name="vexpand">True</property>
+            <child>
+              <object class="GtkButton" id="bStart">
+                <property name="hexpand">True</property>
+                <property name="label">Start</property>
+                <property name="margin-bottom">5</property>
+                <property name="margin-end">5</property>
+                <property name="margin-start">5</property>
+                <property name="margin-top">5</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="bStop">
+                <property name="hexpand">True</property>
+                <property name="label">Stop</property>
+                <property name="margin-bottom">5</property>
+                <property name="margin-end">5</property>
+                <property name="margin-start">5</property>
+                <property name="margin-top">5</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="hexpand">True</property>
+                <property name="margin-bottom">5</property>
+                <property name="margin-end">5</property>
+                <property name="margin-start">5</property>
+                <property name="margin-top">5</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>
