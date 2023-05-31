@@ -35,7 +35,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkEntry" id="ePath">
+              <object class="GtkEntry" id="eFilePath">
                 <property name="hexpand">True</property>
                 <property name="margin-bottom">5</property>
                 <property name="margin-end">5</property>

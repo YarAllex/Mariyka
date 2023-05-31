@@ -15,7 +15,7 @@
 	(2,9,"GtkButton","bStop",7,None,None,None,1),
 	(2,10,"GtkButton",None,7,None,None,None,2),
 	(2,11,"GtkCheckButton","cLoop",3,None,None,None,3),
-	(2,13,"GtkEntry","ePath",3,None,None,None,2)
+	(2,13,"GtkEntry","eFilePath",3,None,None,None,2)
   </object>
   <object_property>
 	(2,1,"GtkWindow","default-height","130",None,None,None,None,None),

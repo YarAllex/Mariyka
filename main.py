@@ -3,52 +3,55 @@ import subprocess
 import time
 from subprocess import Popen, PIPE
 
-WAITING_PERIOD = 15
-WAITING_TIMEOUT = 30
-
-CMD_CREATE_CAM = ['sudo', '-S', 'modprobe', 'v4l2loopback', 'exclusive_caps=1', 'card_label="Virtual Cam"']
-CMD_RELEASE_CAM = ['sudo', '-S', 'modprobe', 'v4l2loopback', '-r']
-CMD_START_FFMPEG_STREAM = ['ffmpeg', '-stream_loop', '-1', '-re', '-i', '/home/yar/Videos/test/countdown.mp4', '-f', 'v4l2', '/dev/video2']
-
-ENTER_THE_SUDO_PASSWORD = 'Enter the sudo password: '
-RUN_STREAM = 'Run stream'
-CREATE_CAMERA = 'Create camera'
-PRESS_ENTER_TO_STOP = "Press enter to stop..."
-RELEASE_CAMERA = 'Release camera'
-LOOPBACK_IS_IN_USE = 'Module v4l2loopback is in use'
-PLEASE_WAIT = 'please wait...'
-ERROR_TIME_IS_OVER = 'Error: Time is over'
-
-global stream
 
 class Controller:
+    filePath = ''
+
+    WAITING_PERIOD = 15
+    WAITING_TIMEOUT = 30
+
+    CMD_CREATE_CAM = ['sudo', '-S', 'modprobe', 'v4l2loopback', 'exclusive_caps=1', 'card_label="Virtual Cam"']
+    CMD_RELEASE_CAM = ['sudo', '-S', 'modprobe', 'v4l2loopback', '-r']
+    CMD_START_FFMPEG_STREAM = ['ffmpeg', '-stream_loop', '-1', '-re', '-i', filePath, '-f', 'v4l2', '/dev/video2']
+
+    ENTER_THE_SUDO_PASSWORD = 'Enter the sudo password: '
+    RUN_STREAM = 'Run stream'
+    CREATE_CAMERA = 'Create camera'
+    PRESS_ENTER_TO_STOP = "Press enter to stop..."
+    RELEASE_CAMERA = 'Release camera'
+    LOOPBACK_IS_IN_USE = 'Module v4l2loopback is in use'
+    PLEASE_WAIT = 'please wait...'
+    ERROR_TIME_IS_OVER = 'Error: Time is over'
+
+    stream = None
+
     def create_cam(self):
-        pipe = subprocess.Popen(CMD_CREATE_CAM, stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
-        pipe.communicate(input=getpass.getpass(ENTER_THE_SUDO_PASSWORD))
+        pipe = subprocess.Popen(self.CMD_CREATE_CAM, stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
+        pipe.communicate(input=getpass.getpass(self.ENTER_THE_SUDO_PASSWORD))
         pipe.wait()
         del pipe
-        print(CREATE_CAMERA)
+        print(self.CREATE_CAMERA)
 
     def release_cam(self):
-        error = self.run_cmd(CMD_RELEASE_CAM)
+        error = self.run_cmd(self.CMD_RELEASE_CAM)
 
-        if error.__contains__(LOOPBACK_IS_IN_USE):
-            success = self.waiting_camera(CMD_RELEASE_CAM, error)
+        if error.__contains__(self.LOOPBACK_IS_IN_USE):
+            success = self.waiting_camera(self.CMD_RELEASE_CAM, error)
         else:
             success = True
 
         if success:
-            print(RELEASE_CAMERA)
+            print(self.RELEASE_CAMERA)
         else:
-            print(ERROR_TIME_IS_OVER)
+            print(self.ERROR_TIME_IS_OVER)
 
     def waiting_camera(self, cmd, error):
-        print(LOOPBACK_IS_IN_USE, PLEASE_WAIT)
+        print(self.LOOPBACK_IS_IN_USE, self.PLEASE_WAIT)
 
-        i = WAITING_PERIOD
-        while error.__contains__(LOOPBACK_IS_IN_USE) and i > 0:
+        i = self.WAITING_PERIOD
+        while error.__contains__(self.LOOPBACK_IS_IN_USE) and i > 0:
             print('...')
-            time.sleep(WAITING_TIMEOUT / i)
+            time.sleep(self.WAITING_TIMEOUT / i)
             error = self.run_cmd(cmd)
             i -= 1
         print('')
@@ -64,20 +67,27 @@ class Controller:
         return error
 
     def run_stream(self):
-        global stream
-        stream = Popen(CMD_START_FFMPEG_STREAM, stderr=PIPE, stdout=PIPE, stdin=PIPE, universal_newlines=True)
-        print(RUN_STREAM)
+        self.stream = Popen(self.CMD_START_FFMPEG_STREAM, stderr=PIPE, stdout=PIPE, stdin=PIPE, universal_newlines=True)
+        print(self.RUN_STREAM)
 
     def stop_stream(self):
-        if stream is not None:
-            stream.kill()
+        if self.stream is not None:
+            self.stream.kill()
+
+    def setFilePath(self, path):
+        self.filePath = path
+        # self.CMD_START_FFMPEG_STREAM.pop(5)
+        self.CMD_START_FFMPEG_STREAM[5] = self.filePath
+        # self.CMD_START_FFMPEG_STREAM.
 
 
 def main():
     controller = Controller()
+    controller.setFilePath('/home/yar/Videos/test/countdown.mp4')
     controller.create_cam()
     controller.run_stream()
-    print(input(PRESS_ENTER_TO_STOP), end='')
+    print("Path=", controller.CMD_START_FFMPEG_STREAM)
+    print(input(controller.PRESS_ENTER_TO_STOP), end='')
     controller.stop_stream()
     controller.release_cam()
 
