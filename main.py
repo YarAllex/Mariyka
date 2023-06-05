@@ -6,6 +6,7 @@ from subprocess import Popen, PIPE
 
 class Controller:
     filePath = ''
+    passwd = ''
 
     WAITING_PERIOD = 15
     WAITING_TIMEOUT = 30
@@ -27,7 +28,8 @@ class Controller:
 
     def create_cam(self):
         pipe = subprocess.Popen(self.CMD_CREATE_CAM, stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
-        pipe.communicate(input=getpass.getpass(self.ENTER_THE_SUDO_PASSWORD))
+        # pipe.communicate(input=getpass.getpass(self.ENTER_THE_SUDO_PASSWORD))
+        pipe.communicate(self.passwd)
         pipe.wait()
         del pipe
         print(self.CREATE_CAMERA)
